@@ -91,3 +91,22 @@ span.shiki-italic {
 span.shiki-ul {
 	text-decoration: underline;
 }
+
+/* Expressive Code blocks rendered in Live Preview (see Cm6_EcBlockField.ts) */
+.markdown-source-view.mod-cm6 .shiki-lp-block {
+	cursor: text;
+	user-select: text;
+	padding: 0.25em 0;
+}
+
+.markdown-source-view.mod-cm6 .shiki-lp-placeholder {
+	margin: 0;
+	padding: 1rem 1.35rem;
+	font-family: var(--font-monospace);
+	font-size: var(--code-size);
+	line-height: 1.65;
+	white-space: pre;
+	overflow-x: auto;
+	background: var(--code-background);
+	border-radius: var(--code-radius);
+}

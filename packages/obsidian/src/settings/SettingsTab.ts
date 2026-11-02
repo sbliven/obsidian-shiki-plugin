@@ -36,6 +36,11 @@ export class ShikiSettingsTab extends PluginSettingTab {
 				control: { type: 'toggle', key: 'inlineHighlighting' },
 			},
 			{
+				name: 'Render code blocks in Live Preview',
+				desc: 'Shows code blocks in Live Preview the way they look in Reading view (Expressive Code), until the cursor enters them.',
+				control: { type: 'toggle', key: 'livePreviewEcRendering' },
+			},
+			{
 				type: 'group',
 				heading: 'EC defaults',
 				items: [

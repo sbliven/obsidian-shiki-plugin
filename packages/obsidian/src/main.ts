@@ -1,6 +1,8 @@
+import type { EditorView } from '@codemirror/view';
 import type { MarkdownPostProcessor } from 'obsidian';
 import { debounce, loadPrism, MarkdownPreviewRenderer, MarkdownView, Plugin, TFile } from 'obsidian';
 import { CodeBlock } from 'packages/obsidian/src/CodeBlock';
+import { createEcBlockExtension, refreshEcBlocksEffect } from 'packages/obsidian/src/codemirror/Cm6_EcBlockField';
 import { createCm6Plugin } from 'packages/obsidian/src/codemirror/Cm6_ViewPlugin';
 import { CodeHighlighter } from 'packages/obsidian/src/Highlighter';
 import { InlineCodeBlock } from 'packages/obsidian/src/InlineCodeBlock';
@@ -22,6 +24,8 @@ export default class ShikiPlugin extends Plugin {
 	declare settings: Settings;
 	loadedSettings!: Settings;
 	updateCm6Plugin?: () => Promise<void>;
+	/** Editors that have our CM6 extensions, used to refresh their widgets. */
+	readonly liveEditors = new Set<EditorView>();
 
 	private codeBlockProcessors = new Map<string, MarkdownPostProcessor>();
 	private settingTab!: ShikiSettingsTab;
@@ -57,7 +61,7 @@ export default class ShikiPlugin extends Plugin {
 			this.codeBlockProcessors.clear();
 		});
 
-		this.registerEditorExtension([createCm6Plugin(this)]);
+		this.registerEditorExtension([createCm6Plugin(this), createEcBlockExtension(this)]);
 
 		// this is a workaround for the fact that obsidian does not rerender the code block
 		// when the start line with the language changes, and we need that for the EC meta string
@@ -123,11 +127,21 @@ export default class ShikiPlugin extends Plugin {
 			}
 
 			await this.updateCm6Plugin?.();
+			this.refreshEcBlocks();
 			this.settingTab.update();
 		});
 		// Keep the queue usable after a failed reload; the caller receives the error.
 		this.reloadTask = task.catch(() => {});
 		return task;
+	}
+
+	/**
+	 * Redraws the Expressive Code widgets in all Live Preview editors.
+	 */
+	refreshEcBlocks(): void {
+		for (const view of this.liveEditors) {
+			view.dispatch({ effects: refreshEcBlocksEffect.of(null) });
+		}
 	}
 
 	async registerPrismPlugin(): Promise<void> {
