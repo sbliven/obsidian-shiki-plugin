@@ -1,5 +1,6 @@
 import type { MarkdownPostProcessorContext } from 'obsidian';
 import { MarkdownRenderChild } from 'obsidian';
+import { attachClickToEdit, liveEditorViewFor } from 'packages/obsidian/src/codemirror/Cm6_ClickToEdit';
 import type ShikiPlugin from 'packages/obsidian/src/main';
 
 export class CodeBlock extends MarkdownRenderChild {
@@ -66,6 +67,14 @@ export class CodeBlock extends MarkdownRenderChild {
 
 		this.cachedMetaString = this.getMetaString();
 		void this.render(this.cachedMetaString);
+
+		// Code blocks rendered by Obsidian inside Live Preview embeds (e.g. callouts).
+		attachClickToEdit({
+			containerEl: this.containerEl,
+			getSource: () => this.source,
+			getView: () => liveEditorViewFor(this.containerEl),
+			listen: (el, type, cb) => this.registerDomEvent(el, type, cb),
+		});
 	}
 
 	public onunload(): void {

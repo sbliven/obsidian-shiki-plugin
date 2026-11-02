@@ -5,6 +5,7 @@ import { EditorSelection, Prec, StateEffect, StateField } from '@codemirror/stat
 import type { DecorationSet } from '@codemirror/view';
 import { Decoration, EditorView, keymap, ViewPlugin, WidgetType } from '@codemirror/view';
 import { editorLivePreviewField } from 'obsidian';
+import { attachClickToEdit } from 'packages/obsidian/src/codemirror/Cm6_ClickToEdit';
 import type ShikiPlugin from 'packages/obsidian/src/main';
 
 /**
@@ -15,7 +16,8 @@ import type ShikiPlugin from 'packages/obsidian/src/main';
  * and the rule for when the widget turns back into source are all internal and can't be configured.
  * By owning the widget we decide:
  *   - when it is shown (no selection touches the block),
- *   - how mouse and keyboard interaction with it works.
+ *   - what a click does (cursor at the clicked character, see `Cm6_ClickToEdit`),
+ *   - that a drag only selects text and leaves the widget alone.
  *
  * Block-level replace decorations have to come from a StateField (ViewPlugins can't provide them).
  */
@@ -153,13 +155,20 @@ class EcBlockWidget extends WidgetType {
 			})();
 		}
 
+		attachClickToEdit({
+			containerEl: wrapper,
+			getSource: () => this.block.source,
+			getView: () => view,
+			listen: (el, type, cb) => el.addEventListener(type, cb),
+		});
+
 		return wrapper;
 	}
 
 	ignoreEvent(): boolean {
-		// Let CodeMirror handle mouse events: a click places the cursor at the block boundary,
-		// which touches the block and reveals the source.
-		return false;
+		// We handle mouse events ourselves (click-to-edit). Letting CodeMirror handle mousedown would make it
+		// place the cursor at the widget boundary, which reveals the source before a drag selection can start.
+		return true;
 	}
 }
 
