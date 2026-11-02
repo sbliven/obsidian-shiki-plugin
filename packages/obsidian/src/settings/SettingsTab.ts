@@ -41,6 +41,11 @@ export class ShikiSettingsTab extends PluginSettingTab {
 				control: { type: 'toggle', key: 'livePreviewEcRendering' },
 			},
 			{
+				name: 'Click to edit code blocks',
+				desc: 'In Live Preview, clicking a rendered code block places the cursor at the clicked character and shows the source. Dragging still selects text.',
+				control: { type: 'toggle', key: 'clickToEdit' },
+			},
+			{
 				type: 'group',
 				heading: 'EC defaults',
 				items: [

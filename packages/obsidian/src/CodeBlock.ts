@@ -72,6 +72,7 @@ export class CodeBlock extends MarkdownRenderChild {
 		attachClickToEdit({
 			containerEl: this.containerEl,
 			getSource: () => this.source,
+			isEnabled: () => this.plugin.settings.clickToEdit,
 			getView: () => liveEditorViewFor(this.containerEl),
 			listen: (el, type, cb) => this.registerDomEvent(el, type, cb),
 		});

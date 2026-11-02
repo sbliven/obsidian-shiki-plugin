@@ -158,6 +158,7 @@ class EcBlockWidget extends WidgetType {
 		attachClickToEdit({
 			containerEl: wrapper,
 			getSource: () => this.block.source,
+			isEnabled: () => this.plugin.settings.clickToEdit,
 			getView: () => view,
 			listen: (el, type, cb) => el.addEventListener(type, cb),
 		});

@@ -19,6 +19,7 @@ export interface Settings {
 	lightTheme: string;
 	preferThemeColors: boolean;
 	inlineHighlighting: boolean;
+	clickToEdit: boolean;
 	livePreviewEcRendering: boolean;
 	ecDefaultShowLineNumbers: boolean;
 	ecDefaultWrap: boolean;
@@ -34,6 +35,7 @@ export const DEFAULT_SETTINGS: Settings = {
 	lightTheme: OBSIDIAN_THEME_IDENTIFIER,
 	preferThemeColors: true,
 	inlineHighlighting: true,
+	clickToEdit: true,
 	livePreviewEcRendering: true,
 	ecDefaultShowLineNumbers: false,
 	ecDefaultWrap: false,

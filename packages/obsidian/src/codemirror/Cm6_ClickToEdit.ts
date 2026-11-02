@@ -221,6 +221,7 @@ type Listen = (el: HTMLElement, type: 'mousedown' | 'click', cb: (ev: MouseEvent
 export interface ClickToEditOptions {
 	containerEl: HTMLElement;
 	getSource: () => string;
+	isEnabled: () => boolean;
 	/** Returns the editor that contains `containerEl`, or null if it's not in an editable Live Preview editor. */
 	getView: () => EditorView | null;
 	listen: Listen;
@@ -255,7 +256,7 @@ export function attachClickToEdit(opts: ClickToEditOptions): void {
 		const start = down;
 		down = null;
 
-		if (!start || ev.button !== 0 || ev.shiftKey || ev.altKey || ev.ctrlKey || ev.metaKey) {
+		if (!opts.isEnabled() || !start || ev.button !== 0 || ev.shiftKey || ev.altKey || ev.ctrlKey || ev.metaKey) {
 			return;
 		}
 		// A drag (text selection): leave the rendered block alone so the user can copy text.
